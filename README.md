@@ -1,38 +1,35 @@
 # cartConsole
 Main RoboCart-Console
 
-# ----------------------journal-----------------------
- problem:                                            
+# ---------------------2016.1.31---------------------- 
+## problem:                                            
    1. Can't do it real-time.                         
    2. Can't stop automaticly.                        
    3. need to excicute two process manually.         
    4. ugly.                                          
                                                      
----------------------2016.1.31---------------------- 
 
 # ----------------real-time solution------------------ 
   A. put readline() method into generator(done)       
   B. read as many lines as you can at a time          
  ---------------------------------------------------- 
 
-# ----------------------journal----------------------- 
+# ----------------------2016.2.1---------------------- 
   problem:                                            
     1. Can't stop automaticly.                        
     2. Program will be block when no data send.       
     3. Ugly.                                          
     4. Need to run it using thread programming.       
                                                       
- ----------------------2016.2.1---------------------- 
 
-# ----------------------journal----------------------- 
+# ---------------------2016.2.17----------------------  
   update:                                             
     1. Embedded the plot into Qt5(used to be Tkinter) 
     2. Woring on complete the function                
     3. Thread block problem still unhandled           
                                                       
- ---------------------2016.2.17---------------------- 
 
-# ----------------------journal----------------------- 
+# ---------------------2016.2.18---------------------- 
   update:                                             
     1. After added timeout=0 arg into serial init th- 
        e thread block problem finnal solved. but the  
@@ -42,9 +39,8 @@ Main RoboCart-Console
        ethod generatorself.                           
     3. working on completing function                 
                                                       
- ---------------------2016.2.18---------------------- 
 
-# -----------------------journal---------------------- 
+# ---------------------2016.3.15---------------------- 
   update:                                             
     1. Solved many problems which was mentioned above 
                                                       
@@ -62,9 +58,8 @@ Main RoboCart-Console
            some adjust work like PID adjustment       
        (4) more to think and discuss.                 
                                                       
- ---------------------2016.3.15---------------------- 
 
-# -----------------------journal---------------------- 
+# ---------------------2016.4.2----------------------- 
   update:                                             
     1. Since I know that uart can do I/O the same t-  
        me(almost), developed the control function.    
@@ -86,9 +81,8 @@ Main RoboCart-Console
        an analyse tool to have a speed-up of our dear 
        cart.                                          
                                                       
- ---------------------2016.4.2----------------------- 
 
-# -----------------------journal---------------------- 
+# ---------------------2016.4.12---------------------- 
   updata:                                             
     1. Add 4 plots for four wheel rotation.           
     2. completed save function(auto generate its      
@@ -97,9 +91,8 @@ Main RoboCart-Console
   blueprint:                                          
     Same as one above                                 
                                                       
- ---------------------2016.4.12---------------------- 
 
-# -----------------------journal---------------------- 
+# ---------------------2016.4.26----------------------
   updata:                                             
     1. Remove wheel's rotation plots 'cause it is too 
        slow to update intime                          
@@ -112,5 +105,4 @@ Main RoboCart-Console
   blueprint:                                          
     1. Record cart information automatic.             
     2. Demotion plot function as an alternative option
-                                                      
- ---------------------2016.4.26---------------------- 
+                                                       
