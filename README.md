@@ -77,7 +77,8 @@ Main RoboCartConsole
 # 2016.4.26
 ### update:                                             
 1. Remove wheel's rotation plots 'cause it is too slow to update intime
-2. Add a useless function to record time node manually, I don't know why there are people who wanna go to somewhere by carriage just for get their destination faster when a car available.                                           
+2. Add a useless function to record time node manually, I don't know why there are people who wanna go to somewhere by carriage just for get their destination faster when a car available.
+                                       
 ### blueprint:                                          
 1. Record cart information automatic.             
 2. Demotion plot function as an alternative option
