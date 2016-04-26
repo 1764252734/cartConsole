@@ -3,7 +3,7 @@
 # @Author: Macpotty
 # @Date:   2016-02-16 16:36:30
 # @Last Modified by:   Macpotty
-# @Last Modified time: 2016-04-26 21:08:19
+# @Last Modified time: 2016-04-26 21:23:42
 from PyQt5 import QtGui, QtCore, QtWidgets
 import sys
 import numpy as np
@@ -457,8 +457,6 @@ class GUIsetting(QtWidgets.QMainWindow):
                                  QtCore.Qt.CTRL + QtCore.Qt.Key_S)
         self.file_menu.addAction('&saveEncoder', self.saveEncoder,
                                  QtCore.Qt.CTRL + QtCore.Qt.Key_D)
-        self.file_menu.addAction('Timer', self.showTimer,
-                                 QtCore.Qt.CTRL + QtCore.Qt.Key_T)
         self.file_menu.addAction('&Quit', self.fileQuit,
                                  QtCore.Qt.CTRL + QtCore.Qt.Key_Q)
         self.help_menu = self.menubar.addMenu('&Help')
@@ -624,8 +622,21 @@ This is a program for cart adjusting. function completing.""")
             except Exception:
                 self.warning('failed to operation the file.')
                 print(Exception)
+        elif self.manualTimer is not None and len(self.manualTimer) != 0:
+            fname = QtWidgets.QFileDialog.getSaveFileName(self,
+                                                          'Save timeNode File',
+                                                          'timeNode%s.txt' % time.ctime(),
+                                                          "Text Files (*.txt)")
+            try:
+                with open(fname[0], 'w') as self.fobj:
+                    self.fobj.write(self.manualTimer)
+                    self.savedFlag = True
+            except Exception:
+                self.warning('failed to operation the file.')
+                print(Exception)
         else:
-            self.warning('no time node recorded.')
+            self.warning('no time node in the record.')
+
         # -----------------------------function below is for save point after plotting-----------------------------------------
         # if (not self.savedFlag and self.plotedFlag) or self.plottingFlag:
         #     fname = QtWidgets.QFileDialog.getSaveFileName(self, 'Save File', os.path.split(os.path.realpath(__file__))[0])
@@ -738,12 +749,6 @@ This is a program for cart adjusting. function completing.""")
         self.menu.show()
         closeSignal = Communicator()
         closeSignal.signal.connect(self.menu.close)
-
-    def showTimer(self):
-        self.timer = LcdTimer()
-        self.timer.show()
-        closeSignal = Communicator()
-        closeSignal.signal.connect(self.timer.close)
 
 
 class Communicator(QtCore.QObject):
@@ -932,7 +937,7 @@ if __name__ == '__main__':
 #    1. But goRoute function can't work well since ma- #
 #       in control program changed, now click goRoute  #
 #       button with what click EnmergencyStop button   #
-#       to dirve the cart. Need to fix this.           #
+#       to dirve the cart. Need to fix it.             #
 #                                                      #
 #  blueprint:                                          #
 #    1. To make this software more useful. use it at   #
@@ -951,3 +956,19 @@ if __name__ == '__main__':
 #    Same as one above                                 #
 #                                                      #
 # ---------------------2016.4.12---------------------- #
+
+# -----------------------journal---------------------- #
+#  updata:                                             #
+#    1. Remove wheel's rotation plots 'cause it is too #
+#       slow to update intime                          #
+#    2. Add a useless function to record time node man-#
+#       ually, I don't know why there are people who   #
+#       wanna go to somewhere by carriage just for     #
+#       get their destination faster when a car availa-#
+#       ble.                                           #
+#                                                      #
+#  blueprint:                                          #
+#    1. Record cart information automatic.             #
+#    2. Demotion plot function as an alternative option#
+#                                                      #
+# ---------------------2016.4.26---------------------- #
