@@ -3,7 +3,7 @@
 # @Author: Macpotty
 # @Date:   2016-02-16 16:36:30
 # @Last Modified by:   Macpotty
-# @Last Modified time: 2016-04-26 19:02:04
+# @Last Modified time: 2016-04-26 20:51:23
 from PyQt5 import QtGui, QtCore, QtWidgets
 import sys
 import numpy as np
@@ -13,13 +13,10 @@ import matplotlib.animation as animation
 import matplotlib.gridspec as gridspec
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
-# implement the default mpl key bindings
-# import mec_acc
 import serial
 import os.path
 import platform
 import struct
-# import threading
 import time
 import matplotlib
 matplotlib.use('Qt5Agg')
@@ -402,7 +399,7 @@ class Graph():
                 self.ax3.figure.canvas.draw()
                 self.ax4.figure.canvas.draw()
                 self.ax5.figure.canvas.draw()
-                self.axFl.figure.canvas.draw()
+                # self.axFl.figure.canvas.draw()
                 # self.axFl.figure.canvas.draw()
                 # self.axBl.figure.canvas.draw()
                 # self.axBl.figure.canvas.draw()
@@ -775,6 +772,10 @@ class Menu(QtWidgets.QMainWindow):
         self.label.setText("This is it!")
         self.label.setAlignment(QtCore.Qt.AlignCenter)
 
+        self.displayer = QtWidgets.QLabel(self)
+        self.displayer.setText("")
+        self.displayer.setFont(QtGui.QFont("Myriad Set", 20))
+
         self.goRouteButton = QtWidgets.QPushButton('go Route', self)
         self.goRouteButton.setToolTip('<b>click</b> to go route.')
         self.goRouteButton.resize(self.goRouteButton.sizeHint())
@@ -785,6 +786,17 @@ class Menu(QtWidgets.QMainWindow):
         self.emergencyButton.resize(self.emergencyButton.sizeHint())
         self.emergencyButton.clicked.connect(self.emergencyStop)
 
+        self.initTimerButton = QtWidgets.QPushButton('timer start', self)
+        self.initTimerButton.setCheckable(True)
+        self.initTimerButton.clicked[bool].connect(self.timerOper)
+
+        # self.emergencyButton = QtWidgets.QPushButton('timer Stop', self)
+        # self.emergencyButton.setToolTip('<b>click</b> to force it stop.')
+        # self.emergencyButton.resize(self.emergencyButton.sizeHint())
+        # self.emergencyButton.clicked.connect(self.emergencyStop)
+
+        self.extension.addWidget(self.displayer)
+        self.funcButtonBar.addWidget(self.initTimerButton)
         self.funcButtonBar.addWidget(self.goRouteButton)
         self.funcButtonBar.addWidget(self.emergencyButton)
         self.extension.addLayout(self.funcButtonBar)
@@ -796,6 +808,21 @@ class Menu(QtWidgets.QMainWindow):
         self.label.adjustSize()
 
         self.runningFlag = False
+
+    def timerOper(self, pressed):
+        if pressed:
+            self.current = 0
+            self.display()
+
+            self.timer = QtCore.QTimer()
+            self.timer.timeout.connect(self.display)
+            self.timer.start(100)
+        else:
+            self.timer.stop()
+
+    def display(self):
+        self.current += 0.1
+        self.displayer.setText('%.1f' % self.current)
 
     def goRoute(self):
         try:
@@ -817,25 +844,27 @@ class Menu(QtWidgets.QMainWindow):
 class LcdTimer(QtWidgets.QFrame):
     def __init__(self):
         super(LcdTimer, self).__init__()
-        self.currTime = QtWidgets.QLCDNumber(8, self)
-        self.currTime.setGeometry(10, 10, 200, 70)
-        self.currTime.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
+        self.displayer = QtWidgets.QLCDNumber(8, self)
+        self.displayer.setGeometry(10, 10, 200, 70)
+        self.displayer.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
+        self.current = 0
         self.display()
 
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.display)
-        self.timer .start(1000)
+        self.timer.start(100)
+        # jump tp self.display function per 0.1 sec.
 
-        self.build_tray()
+        # self.build_tray()
         self.resize(220, 100)
-        self.central()
+        # self.central()
 
         # 边框透明
-        self.currTime.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.SubWindow | QtCore.Qt.WindowStaysOnTopHint)
+        # self.displayer.setFrameShape(QtWidgets.QFrame.NoFrame)
+        # self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.SubWindow | QtCore.Qt.WindowStaysOnTopHint)
         # 透明处理，移动需要拖动数字
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
-        self.setMouseTracking(True)
+        # self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
+        # self.setMouseTracking(True)
 
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
@@ -847,45 +876,14 @@ class LcdTimer(QtWidgets.QFrame):
             self.move(event.globalPos() - self.dragPosition)
             event.accept()
 
-    def build_tray(self):
-        self.trayIcon = QtWidgets.QSystemTrayIcon(self)
-        self.trayIcon.setIcon(QtGui.QIcon('resource/logo.png'))
-        self.trayIcon.show()
-        self.trayIcon.setToolTip('时钟 -LiKui')
-        self.trayIcon.activated.connect(self.trayClick)
-
-        menu = QtWidgets.QMenu()
-        normalAction = menu.addAction('正常显示')
-        miniAction = menu.addAction('最小化托盘')
-        exitAction = menu.addAction('退出')
-        normalAction.triggered.connect(self.showNormal)
-        exitAction.triggered.connect(self.exit)
-        miniAction.triggered.connect(self.showMinimized)
-
-        self.trayIcon.setContextMenu(menu)
-
-    def exit(self):
-        # 不设置Visible为False，退出后TrayIcon不会刷新
-        self.trayIcon.setVisible(False)
-        sys.exit(0)
-
-    def trayClick(self, reason):
-        if reason == QtWidgets.QSystemTrayIcon.DoubleClick:
-            self.showNormal()
-            self.repaint()
-
     def display(self):
-        current = QtCore.QTime.currentTime()
-        self.currTime.display(current.toString('HH:mm:ss'))
+        self.current += 0.1
+        self.displayer.display(self.current)
 
-    def showNormal(self):
-        super(LcdTimer, self).showNormal()
-        self.repaint()
-
-    def central(self):
-        screen = QtWidgets.QDesktopWidget().screenGeometry()
-        size = self.geometry()
-        self.move(screen.width() - size.width(), 0)
+    # def central(self):
+    #     screen = QtWidgets.QDesktopWidget().screenGeometry()
+    #     size = self.geometry()
+    #     self.move(screen.width() - size.width(), 0)
 
 
 if __name__ == '__main__':
