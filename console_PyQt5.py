@@ -1,9 +1,9 @@
-#!/usr/bin/env python3.4
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # @Author: Macpotty
 # @Date:   2016-02-16 16:36:30
 # @Last Modified by:   Macpotty
-# @Last Modified time: 2016-04-21 21:59:44
+# @Last Modified time: 2016-04-26 19:02:04
 from PyQt5 import QtGui, QtCore, QtWidgets
 import sys
 import numpy as np
@@ -110,7 +110,7 @@ class Graph():
         # self.axBr.set_title("Br-rotation")
 
         # 初始化并设定各子图样式
-        self.route, = self.ax1.plot([], [], 'g-', lw=2)     #lw is linewidth
+        self.route, = self.ax1.plot([], [], 'g-', lw=2)
         self.stdB_route, = self.ax1.plot([], [], 'b-', lw=2)
         self.stdR_route, = self.ax1.plot([], [], 'r-', lw=2)
         self.angle, = self.ax2.plot([], [], 'b-', lw=2)
@@ -214,16 +214,18 @@ class Graph():
             timeRecord = []
             for i in range(len(self.timeNode)):
                 if i == 0:
-                    timeRecord.append("大车路径点记录：\n第%.1f秒大车启动\n" % (self.timeNode[i]))
+                    timeRecord.append("大车路径点记录：\n第%.1f秒大车启动\n" %
+                                      (self.timeNode[i]))
                 else:
-                    timeRecord.append("第%d段路径用时%.1f秒\n" % (i, self.timeNode[i]-self.timeNode[i-1]))
+                    timeRecord.append("第%d段路径用时%.1f秒\n" %
+                                      (i, self.timeNode[i] - self.timeNode[i - 1]))
             if len(self.timeNode) == 19:
                 timeRecord.append("路径用时%.1f秒，寻杆用时%.1f秒\n总计用时%.1f秒" %
-                                  (self.timeNode[17]-self.timeNode[0],
-                                   self.timeNode[18]-self.timeNode[17],
-                                   self.timeNode[18]-self.timeNode[0]))
+                                  (self.timeNode[17] - self.timeNode[0],
+                                   self.timeNode[18] - self.timeNode[17],
+                                   self.timeNode[18] - self.timeNode[0]))
             else:
-                timeRecord.append("总计用时%.1f秒" % (self.timeNode[-1]-self.timeNode[0]))
+                timeRecord.append("总计用时%.1f秒" % (self.timeNode[-1] - self.timeNode[0]))
         else:
             timeRecord = ["no data in the record"]
         timeRecord = ''.join(timeRecord)
@@ -360,10 +362,10 @@ class Graph():
                     # self.optimalSpeed_data.append(self.optimalSpeed)
 
                     yield (self.X, self.Y, self.A,
-                        self.Speed_X, self.Speed_Y, self.Speed)
-                    #一定要有这个生成器
+                           self.Speed_X, self.Speed_Y, self.Speed)
+                    # 一定要有这个生成器
 
-    def func(self, generator):      #绘图函数
+    def func(self, generator):
         # expand ax_x when t is larger than xlim
         # self.database = self.fobj.readlines()
         self.min, self.max = self.ax3.get_xlim()
@@ -387,10 +389,10 @@ class Graph():
                 # self.axBl.figure.canvas.draw()
                 # self.axBr.figure.canvas.draw()
             else:
-                self.ax2.set_ylim(self.t//10*10, self.t//10*10 + 50)
-                self.ax3.set_xlim(self.t//10*10, self.t//10*10 + 50)
-                self.ax4.set_xlim(self.t//10*10, self.t//10*10 + 50)
-                self.ax5.set_xlim(self.t//10*10, self.t//10*10 + 50)
+                self.ax2.set_ylim(self.t // 10 * 10, self.t // 10 * 10 + 50)
+                self.ax3.set_xlim(self.t // 10 * 10, self.t // 10 * 10 + 50)
+                self.ax4.set_xlim(self.t // 10 * 10, self.t // 10 * 10 + 50)
+                self.ax5.set_xlim(self.t // 10 * 10, self.t // 10 * 10 + 50)
                 # self.axFl.set_xlim(self.t//10*10, self.t//10*10 + 50)
                 # self.axFl.set_xlim(self.t//10*10, self.t//10*10 + 50)
                 # self.axBl.set_xlim(self.t//10*10, self.t//10*10 + 50)
@@ -429,21 +431,23 @@ class Graph():
                                                 repeat=False)
         except serial.SerialException:
             raise serial.SerialException
-        self.draw._start()      #somehow in PyQt5 method _start() dosen't execute automaticly, so I have to start it manuly.
+        self.draw._start()
+        # somehow in PyQt5 method _start() dosen't execute automaticly, so I have to start it manuly.
 
-        #the class is class matplotlib.animation.FuncAnimation(fig, func, frames=None, init_func=None, fargs=None, save_count=None, **kwargs)
-        #and it will exicute func per interval(ms)  and #frames is func's arg!!!#
+        # the class is class matplotlib.animation.FuncAnimation(fig, func, frames=None, init_func=None, fargs=None, save_count=None, **kwargs)
+        # and it will exicute func per interval(ms)  and #frames is func's arg!!!#
 
     def animationStop(self):
         self.draw._stop()
 
 
-class GUIsetting(QtWidgets.QMainWindow):        #建立GUI设置类（以Qt5为基类）
-    def __init__(self, parent=None):        #构造函数
+class GUIsetting(QtWidgets.QMainWindow):
+    def __init__(self, parent=None):
         QtWidgets.QMainWindow.__init__(self)
         # self.splash = QtWidgets.QSplashScreen(QtGui.QPixmap(os.path.split(os.path.realpath(__file__))[0] + "/map.png")) #loading image!!
         # self.splash.show()
-        QtWidgets.QToolTip.setFont(QtGui.QFont('Myriad Set'))       #set text-font
+        QtWidgets.QToolTip.setFont(QtGui.QFont('Myriad Set'))
+        # set text-font
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
         self.setWindowTitle('Console')
@@ -456,6 +460,8 @@ class GUIsetting(QtWidgets.QMainWindow):        #建立GUI设置类（以Qt5为�
                                  QtCore.Qt.CTRL + QtCore.Qt.Key_S)
         self.file_menu.addAction('&saveEncoder', self.saveEncoder,
                                  QtCore.Qt.CTRL + QtCore.Qt.Key_D)
+        self.file_menu.addAction('Timer', self.showTimer,
+                                 QtCore.Qt.CTRL + QtCore.Qt.Key_T)
         self.file_menu.addAction('&Quit', self.fileQuit,
                                  QtCore.Qt.CTRL + QtCore.Qt.Key_Q)
         self.help_menu = self.menubar.addMenu('&Help')
@@ -523,7 +529,8 @@ class GUIsetting(QtWidgets.QMainWindow):        #建立GUI设置类（以Qt5为�
 
         self.plottingFlag = False
         self.plotedFlag = False
-        self.savedFlag = False      #unnecessary, But for readabiliy added it.
+        self.savedFlag = False
+        # unnecessary, But for readabiliy added it.
 
         self.show()
         self.checkModel()
@@ -620,7 +627,7 @@ This is a program for cart adjusting. function completing.""")
                 print(Exception)
         else:
             self.warning('no time node recorded.')
-        #-----------------------------function below is for save point after plotting-----------------------------------------
+        # -----------------------------function below is for save point after plotting-----------------------------------------
         # if (not self.savedFlag and self.plotedFlag) or self.plottingFlag:
         #     fname = QtWidgets.QFileDialog.getSaveFileName(self, 'Save File', os.path.split(os.path.realpath(__file__))[0])
         #     try:
@@ -635,7 +642,7 @@ This is a program for cart adjusting. function completing.""")
         #         self.warning('failed to open the file.')
         # else:
         #     self.warning('No new data received!')
-        #----------------------------------------------------------------------------------------------------------------------
+        # ----------------------------------------------------------------------------------------------------------------------
 
     def saveEncoder(self):
         if len(self.graph.encoder1_data) != 0:
@@ -729,8 +736,14 @@ This is a program for cart adjusting. function completing.""")
     def showMenu(self):
         self.menu = Menu(self.graph.ser)
         self.menu.show()
-        self.closeSignal = Communicator()
-        self.closeSignal.signal.connect(self.menu.close)
+        closeSignal = Communicator()
+        closeSignal.signal.connect(self.menu.close)
+
+    def showTimer(self):
+        self.timer = LcdTimer()
+        self.timer.show()
+        closeSignal = Communicator()
+        closeSignal.signal.connect(self.timer.close)
 
 
 class Communicator(QtCore.QObject):
@@ -741,7 +754,8 @@ class Menu(QtWidgets.QMainWindow):
     def __init__(self, serObj):
         QtWidgets.QMainWindow.__init__(self)
 
-        QtWidgets.QToolTip.setFont(QtGui.QFont('Myriad Set'))       #set text-font
+        QtWidgets.QToolTip.setFont(QtGui.QFont('Myriad Set'))
+        # set text-font
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
         self.setWindowTitle('Menu')
@@ -800,106 +814,180 @@ class Menu(QtWidgets.QMainWindow):
             pass
 
 
+class LcdTimer(QtWidgets.QFrame):
+    def __init__(self):
+        super(LcdTimer, self).__init__()
+        self.currTime = QtWidgets.QLCDNumber(8, self)
+        self.currTime.setGeometry(10, 10, 200, 70)
+        self.currTime.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
+        self.display()
+
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.display)
+        self.timer .start(1000)
+
+        self.build_tray()
+        self.resize(220, 100)
+        self.central()
+
+        # 边框透明
+        self.currTime.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.SubWindow | QtCore.Qt.WindowStaysOnTopHint)
+        # 透明处理，移动需要拖动数字
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
+        self.setMouseTracking(True)
+
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.dragPosition = event.globalPos() - self.frameGeometry().topLeft()
+            event.accept()
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() == QtCore.Qt.LeftButton:
+            self.move(event.globalPos() - self.dragPosition)
+            event.accept()
+
+    def build_tray(self):
+        self.trayIcon = QtWidgets.QSystemTrayIcon(self)
+        self.trayIcon.setIcon(QtGui.QIcon('resource/logo.png'))
+        self.trayIcon.show()
+        self.trayIcon.setToolTip('时钟 -LiKui')
+        self.trayIcon.activated.connect(self.trayClick)
+
+        menu = QtWidgets.QMenu()
+        normalAction = menu.addAction('正常显示')
+        miniAction = menu.addAction('最小化托盘')
+        exitAction = menu.addAction('退出')
+        normalAction.triggered.connect(self.showNormal)
+        exitAction.triggered.connect(self.exit)
+        miniAction.triggered.connect(self.showMinimized)
+
+        self.trayIcon.setContextMenu(menu)
+
+    def exit(self):
+        # 不设置Visible为False，退出后TrayIcon不会刷新
+        self.trayIcon.setVisible(False)
+        sys.exit(0)
+
+    def trayClick(self, reason):
+        if reason == QtWidgets.QSystemTrayIcon.DoubleClick:
+            self.showNormal()
+            self.repaint()
+
+    def display(self):
+        current = QtCore.QTime.currentTime()
+        self.currTime.display(current.toString('HH:mm:ss'))
+
+    def showNormal(self):
+        super(LcdTimer, self).showNormal()
+        self.repaint()
+
+    def central(self):
+        screen = QtWidgets.QDesktopWidget().screenGeometry()
+        size = self.geometry()
+        self.move(screen.width() - size.width(), 0)
+
+
 if __name__ == '__main__':
     qApp = QtWidgets.QApplication(sys.argv)
     aw = GUIsetting()
     sys.exit(qApp.exec_())
 
 
-#----------------------journal-----------------------#
-# problem:                                           #
-#   1. Can't do it real-time.                        #
-#   2. Can't stop automaticly.                       #
-#   3. need to excicute two process manually.        #
-#   4. ugly.                                         #
-#                                                    #
-#---------------------2016.1.31----------------------#
+# ----------------------journal----------------------- #
+#  problem:                                            #
+#    1. Can't do it real-time.                         #
+#    2. Can't stop automaticly.                        #
+#    3. need to excicute two process manually.         #
+#    4. ugly.                                          #
+#                                                      #
+# ---------------------2016.1.31---------------------- #
 
-#----------------real-time solution------------------#
-# A. put readline() method into generator(done)      #
-# B. read as many lines as you can at a time         #
-#----------------------------------------------------#
+# ----------------real-time solution------------------ #
+#  A. put readline() method into generator(done)       #
+#  B. read as many lines as you can at a time          #
+# ---------------------------------------------------- #
 
-#----------------------journal-----------------------#
-# problem:                                           #
-#   1. Can't stop automaticly.                       #
-#   2. Program will be block when no data send.      #
-#   3. Ugly.                                         #
-#   4. Need to run it using thread programming.      #
-#                                                    #
-#----------------------2016.2.1----------------------#
+# ----------------------journal----------------------- #
+#  problem:                                            #
+#    1. Can't stop automaticly.                        #
+#    2. Program will be block when no data send.       #
+#    3. Ugly.                                          #
+#    4. Need to run it using thread programming.       #
+#                                                      #
+# ----------------------2016.2.1---------------------- #
 
-#----------------------journal-----------------------#
-# update:                                            #
-#   1. Embedded the plot into Qt5(used to be Tkinter)#
-#   2. Woring on complete the function               #
-#   3. Thread block problem still unhandled          #
-#                                                    #
-#---------------------2016.2.17----------------------#
+# ----------------------journal----------------------- #
+#  update:                                             #
+#    1. Embedded the plot into Qt5(used to be Tkinter) #
+#    2. Woring on complete the function                #
+#    3. Thread block problem still unhandled           #
+#                                                      #
+# ---------------------2016.2.17---------------------- #
 
-#----------------------journal-----------------------#
-# update:                                            #
-#   1. After added timeout=0 arg into serial init th-#
-#      e thread block problem finnal solved. but the #
-#      program would still stuck after plotting began#
-#   2. The problem above was because when no data re-#
-#      ceived program stuck into a endless loop of m-#
-#      ethod generatorself.                          #
-#   3. working on completing function                #
-#                                                    #
-#---------------------2016.2.18----------------------#
+# ----------------------journal----------------------- #
+#  update:                                             #
+#    1. After added timeout=0 arg into serial init th- #
+#       e thread block problem finnal solved. but the  #
+#       program would still stuck after plotting began #
+#    2. The problem above was because when no data re- #
+#       ceived program stuck into a endless loop of m- #
+#       ethod generatorself.                           #
+#    3. working on completing function                 #
+#                                                      #
+# ---------------------2016.2.18---------------------- #
 
-#-----------------------journal----------------------#
-# update:                                            #
-#   1. Solved many problems which was mentioned above#
-#                                                    #
-# problem:                                           #
-#   1. Clear function dosen't work correctly.        #
-#                                                    #
-# blueprint:                                         #
-#   1. Now that we are able to use uart to transport #
-#      data from PC to cart, which means that it is  #
-#      possible control cart by PC. It'll including  #
-#      these function:                               #
-#      (1) use keyboard as a joystick                #
-#      (2) replace keyborad and LCD's function       #
-#      (3) make a full use of PC's performance to do #
-#          some adjust work like PID adjustment      #
-#      (4) more to think and discuss.                #
-#                                                    #
-#---------------------2016.3.15----------------------#
+# -----------------------journal---------------------- #
+#  update:                                             #
+#    1. Solved many problems which was mentioned above #
+#                                                      #
+#  problem:                                            #
+#    1. Clear function dosen't work correctly.         #
+#                                                      #
+#  blueprint:                                          #
+#    1. Now that we are able to use uart to transport  #
+#       data from PC to cart, which means that it is   #
+#       possible control cart by PC. It'll including   #
+#       these function:                                #
+#       (1) use keyboard as a joystick                 #
+#       (2) replace keyborad and LCD's function        #
+#       (3) make a full use of PC's performance to do  #
+#           some adjust work like PID adjustment       #
+#       (4) more to think and discuss.                 #
+#                                                      #
+# ---------------------2016.3.15---------------------- #
 
-#-----------------------journal----------------------#
-# update:
-#   1. Since I know that uart can do I/O the same t- #
-#      me(almost), developed the control function.   #
-#   2. Now using Lowpass filtering to ajust speed fi-#
-#      gure and had a great effect.                  #
-#   3. Rewrite clear function, now it's good to use  #
-#   4. Rewrite axis limits auto-reset function, now  #
-#      it will not take a long time to reset bit by  #
-#      bit.                                          #
-#                                                    #
-# problem:                                           #
-#   1. But goRoute function can't work well since ma-#
-#      in control program changed, now click goRoute #
-#      button with what click EnmergencyStop button  #
-#      to dirve the cart. Need to fix this.          #
-#                                                    #
-# blueprint:                                         #
-#   1. To make this software more useful. use it at  #
-#      an analyse tool to have a speed-up of our dear#
-#      cart.                                         #
-#                                                    #
-#---------------------2016.4.2-----------------------#
+# -----------------------journal---------------------- #
+#  update:                                             #
+#    1. Since I know that uart can do I/O the same t-  #
+#       me(almost), developed the control function.    #
+#    2. Now using Lowpass filtering to ajust speed fi- #
+#       gure and had a great effect.                   #
+#    3. Rewrite clear function, now it's good to use   #
+#    4. Rewrite axis limits auto-reset function, now   #
+#       it will not take a long time to reset bit by   #
+#       bit.                                           #
+#                                                      #
+#  problem:                                            #
+#    1. But goRoute function can't work well since ma- #
+#       in control program changed, now click goRoute  #
+#       button with what click EnmergencyStop button   #
+#       to dirve the cart. Need to fix this.           #
+#                                                      #
+#  blueprint:                                          #
+#    1. To make this software more useful. use it at   #
+#       an analyse tool to have a speed-up of our dear #
+#       cart.                                          #
+#                                                      #
+# ---------------------2016.4.2----------------------- #
 
-#-----------------------journal----------------------#
-# updata:                                            #
-#   1. Add 4 plots for four wheel rotation.          #
-#   2. completed save function(auto generate its     #
-#      name)                                         #
-#                                                    #
-# blueprint:                                         #
-#   Same as one above                                #
-#                                                    #
-#---------------------2016.4.12----------------------#
+# -----------------------journal---------------------- #
+#  updata:                                             #
+#    1. Add 4 plots for four wheel rotation.           #
+#    2. completed save function(auto generate its      #
+#       name)                                          #
+#                                                      #
+#  blueprint:                                          #
+#    Same as one above                                 #
+#                                                      #
+# ---------------------2016.4.12---------------------- #
