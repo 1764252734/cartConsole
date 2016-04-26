@@ -3,7 +3,7 @@
 # @Author: Macpotty
 # @Date:   2016-02-16 16:36:30
 # @Last Modified by:   Macpotty
-# @Last Modified time: 2016-04-26 20:51:23
+# @Last Modified time: 2016-04-26 21:08:19
 from PyQt5 import QtGui, QtCore, QtWidgets
 import sys
 import numpy as np
@@ -560,6 +560,8 @@ class GUIsetting(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.about(self, 'About',
                                     """©2016 XJTU Roboteam. All Rights Reserved. <br/>
 This is a program for cart adjusting. function completing.""")
+        if self.manualTimer is not None:
+            print(self.manualTimer)
 
     def closeEvent(self, event):
         if (not self.savedFlag and self.plotedFlag) or self.plottingFlag:
@@ -731,7 +733,8 @@ This is a program for cart adjusting. function completing.""")
         self.information(self.graph.timeCount(), "Timer")
 
     def showMenu(self):
-        self.menu = Menu(self.graph.ser)
+        self.manualTimer = []
+        self.menu = Menu(self.graph.ser, self.manualTimer)
         self.menu.show()
         closeSignal = Communicator()
         closeSignal.signal.connect(self.menu.close)
@@ -748,11 +751,12 @@ class Communicator(QtCore.QObject):
 
 
 class Menu(QtWidgets.QMainWindow):
-    def __init__(self, serObj):
+    def __init__(self, serObj, manualTimer):
         QtWidgets.QMainWindow.__init__(self)
 
         QtWidgets.QToolTip.setFont(QtGui.QFont('Myriad Set'))
         # set text-font
+        self.manualTimer = manualTimer
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
         self.setWindowTitle('Menu')
@@ -790,13 +794,12 @@ class Menu(QtWidgets.QMainWindow):
         self.initTimerButton.setCheckable(True)
         self.initTimerButton.clicked[bool].connect(self.timerOper)
 
-        # self.emergencyButton = QtWidgets.QPushButton('timer Stop', self)
-        # self.emergencyButton.setToolTip('<b>click</b> to force it stop.')
-        # self.emergencyButton.resize(self.emergencyButton.sizeHint())
-        # self.emergencyButton.clicked.connect(self.emergencyStop)
+        self.recordButton = QtWidgets.QPushButton('record', self)
+        self.recordButton.clicked.connect(self.record)
 
         self.extension.addWidget(self.displayer)
         self.funcButtonBar.addWidget(self.initTimerButton)
+        self.funcButtonBar.addWidget(self.recordButton)
         self.funcButtonBar.addWidget(self.goRouteButton)
         self.funcButtonBar.addWidget(self.emergencyButton)
         self.extension.addLayout(self.funcButtonBar)
@@ -818,11 +821,15 @@ class Menu(QtWidgets.QMainWindow):
             self.timer.timeout.connect(self.display)
             self.timer.start(100)
         else:
+            self.initTimerButton.setText('timer Stop')
             self.timer.stop()
 
     def display(self):
         self.current += 0.1
         self.displayer.setText('%.1f' % self.current)
+
+    def record(self):
+        self.manualTimer.append(self.current)
 
     def goRoute(self):
         try:
@@ -839,51 +846,6 @@ class Menu(QtWidgets.QMainWindow):
             self.transport.writeCmd("6")
         except Exception:
             pass
-
-
-class LcdTimer(QtWidgets.QFrame):
-    def __init__(self):
-        super(LcdTimer, self).__init__()
-        self.displayer = QtWidgets.QLCDNumber(8, self)
-        self.displayer.setGeometry(10, 10, 200, 70)
-        self.displayer.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
-        self.current = 0
-        self.display()
-
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.display)
-        self.timer.start(100)
-        # jump tp self.display function per 0.1 sec.
-
-        # self.build_tray()
-        self.resize(220, 100)
-        # self.central()
-
-        # 边框透明
-        # self.displayer.setFrameShape(QtWidgets.QFrame.NoFrame)
-        # self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.SubWindow | QtCore.Qt.WindowStaysOnTopHint)
-        # 透明处理，移动需要拖动数字
-        # self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
-        # self.setMouseTracking(True)
-
-    def mousePressEvent(self, event):
-        if event.button() == QtCore.Qt.LeftButton:
-            self.dragPosition = event.globalPos() - self.frameGeometry().topLeft()
-            event.accept()
-
-    def mouseMoveEvent(self, event):
-        if event.buttons() == QtCore.Qt.LeftButton:
-            self.move(event.globalPos() - self.dragPosition)
-            event.accept()
-
-    def display(self):
-        self.current += 0.1
-        self.displayer.display(self.current)
-
-    # def central(self):
-    #     screen = QtWidgets.QDesktopWidget().screenGeometry()
-    #     size = self.geometry()
-    #     self.move(screen.width() - size.width(), 0)
 
 
 if __name__ == '__main__':
